@@ -13,6 +13,10 @@ export class AccessRepo {
     return await this.model.create(userInfo);
   }
 
+  async remove(user_id: string, course_id: string): Promise<boolean> {
+    return (await this.model.deleteMany({ user_id, course_id })).acknowledged;
+  }
+
   async getByUserId(userId: string): Promise<MongoDoc<Access>[] | null> {
     return await this.model.find({ userId });
   }

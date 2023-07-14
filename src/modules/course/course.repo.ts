@@ -9,12 +9,17 @@ export class CourseRepo {
     @InjectModel(Course.name) private readonly model: Model<Course>,
   ) {}
 
-  async create(userInfo: Course): Promise<MongoDoc<Course>> {
-    return await this.model.create(userInfo);
+  async create(courseInfo: Course): Promise<MongoDoc<Course>> {
+    return await this.model.create(courseInfo);
   }
 
-  async getById(userId: string): Promise<MongoDoc<Course> | null> {
-    return await this.model.findById(userId);
+  async editById(course_id: string, courseInfo: Course): Promise<boolean> {
+    return (await this.model.updateOne({ _id: course_id }, courseInfo))
+      .acknowledged;
+  }
+
+  async getById(course_id: string): Promise<MongoDoc<Course> | null> {
+    return await this.model.findById(course_id);
   }
 
   async getPaginatedCourses(

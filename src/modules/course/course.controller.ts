@@ -25,11 +25,16 @@ import { OutGetPaginatedCoursesDto } from './dtos/out-get-paginated-courses.dto'
 import { OutGetCoursesDto } from './dtos/out-get-course.dto';
 import { InCreateCourse } from './dtos/in-create-course.dto';
 import { DuplicateError } from 'src/errors/duplicate-error';
+import { VideoService } from '../video/video.service';
+import { BaseError } from 'src/errors/base-error';
 
 @UseGuards(RolesGuard)
 @Controller('courses')
 export class CourseController {
-  constructor(private readonly courseService: CourseService) {}
+  constructor(
+    private readonly courseService: CourseService,
+    private readonly videoService: VideoService,
+  ) {}
 
   @Get('/')
   @Role('USER')
@@ -54,7 +59,7 @@ export class CourseController {
   ): Promise<OutGetCoursesDto> {
     const course = await this.courseService.createCourse(input);
     if (course instanceof DuplicateError) return course.throw();
-    return { course };
+    return { course: { ...course, videos: [] } };
   }
 
   @Get(':course_id')
@@ -70,6 +75,26 @@ export class CourseController {
     const course = await this.courseService.getCourseById(userId, courseId);
     if (course instanceof NotFoundError) return course.throw();
     if (course instanceof BadRequestError) return course.throw();
-    return { course };
+    const videos = await this.videoService.getVideosByCourseId(course.id);
+    if (videos instanceof BaseError) return videos.throw();
+    return { course: { ...course, videos } };
+  }
+
+  @Put(':course_id')
+  @Role('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'modify course by id' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async modifyCourse(
+    @Req() { userId }: { userId: string },
+    @Param('course_id') courseId: string,
+    @Body() input: InCreateCourse,
+  ): Promise<OutGetCoursesDto> {
+    const new_course = await this.courseService.editCourse(courseId, input);
+    if (new_course instanceof BaseError) return new_course.throw();
+    const videos = await this.videoService.getVideosByCourseId(new_course.id);
+    if (videos instanceof BaseError) return videos.throw();
+    return { course: { ...new_course, videos } };
   }
 }

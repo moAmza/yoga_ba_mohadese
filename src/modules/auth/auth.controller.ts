@@ -19,7 +19,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  @ApiOperation({ summary: 'send verification code' })
+  @ApiOperation({ summary: 'register user' })
   @ApiBadRequestResponse({ type: DuplicateError })
   async register(@Body() userInfo: InRegisterDto): Promise<OutJwtTokenDto> {
     const data = await this.authService.register(userInfo);

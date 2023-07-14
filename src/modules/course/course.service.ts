@@ -16,7 +16,7 @@ import { BaseError } from 'src/errors/base-error';
 export class CourseService {
   constructor(
     private readonly courseRepo: CourseRepo,
-    private accessService: AccessService,
+    private readonly accessService: AccessService,
   ) {}
 
   async createCourse(
@@ -29,6 +29,19 @@ export class CourseService {
       level: 1,
       user_id: '1',
     });
+    return courseFull;
+  }
+
+  async editCourse(
+    course_id: string,
+    courseInfo: InCreateCourse,
+  ): Promise<TypeCourseDto | BadRequestError | NotFoundError> {
+    const isIdValid = mongoose.Types.ObjectId.isValid(course_id);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+    await this.courseRepo.editById(course_id, courseInfo);
+    const course = await this.courseRepo.getById(course_id);
+    if (course === null) return new NotFoundError('Course');
+    const courseFull = CourseDao.convertOne(course);
     return courseFull;
   }
 
@@ -47,19 +60,27 @@ export class CourseService {
     return course;
   }
 
-  async getPaginatedCourses(
+  async getAllCourses(
     userId: string,
-    { page, num }: InGetPaginatedCourses,
-  ): Promise<OutGetPaginatedCoursesDto | BadRequestError> {
+  ): Promise<TypeCourseDto[] | BadRequestError> {
     const userAccesses = await this.accessService.getAccessesByUserId(userId);
     if (userAccesses instanceof BaseError) return userAccesses.throw();
     const courses = await Promise.all(
       userAccesses.map((c) => this.courseRepo.getById(c.course_id)),
     );
 
+    return courses.map(CourseDao.convertOne);
+  }
+
+  async getPaginatedCourses(
+    userId: string,
+    { page, num }: InGetPaginatedCourses,
+  ): Promise<OutGetPaginatedCoursesDto | BadRequestError> {
+    const courses = await this.getAllCourses(userId);
+    if (courses instanceof BadRequestError) return courses.throw();
     const res: OutGetPaginatedCoursesDto = {
       count: courses.length,
-      values: courses.map(CourseDao.convertOne).slice(page - 1 * num, num),
+      values: courses.slice(page - 1 * num, num),
     };
 
     return res;

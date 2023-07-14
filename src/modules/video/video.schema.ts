@@ -2,15 +2,18 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 
 @Schema()
-export class Access {
-  @Prop({ required: true })
-  level: number;
-
+export class Video {
   @Prop({ required: true })
   course_id: mongoose.Types.ObjectId;
 
   @Prop({ required: true })
-  user_id: mongoose.Types.ObjectId;
+  title: string;
+
+  @Prop({ required: true })
+  link: string;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
-export const AccessSchema = SchemaFactory.createForClass(Access);
+export const VideoSchema = SchemaFactory.createForClass(Video);

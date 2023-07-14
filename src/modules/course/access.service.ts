@@ -14,6 +14,7 @@ import { InAccessCourse } from './dtos/in-create-access.dto';
 import { OutGetCoursesDto } from './dtos/out-get-course.dto';
 import { AccessDao } from './daos/access.dao';
 import { TypeAccessDto } from './dtos/type-access.dto';
+import { OutStatusDto } from 'src/dtos/out-status.dto';
 
 @Injectable()
 export class AccessService {
@@ -22,10 +23,23 @@ export class AccessService {
   async createAccess(
     accessInfo: InAccessCourse,
   ): Promise<TypeAccessDto | DuplicateError> {
-    const accessModel = await this.accessRepo.create(accessInfo);
+    const accessModel = await this.accessRepo.create({
+      ...accessInfo,
+      course_id: new mongoose.Types.ObjectId(accessInfo.course_id),
+      user_id: new mongoose.Types.ObjectId(accessInfo.user_id),
+    });
     const accessFull = AccessDao.convertOne(accessModel);
 
     return accessFull;
+  }
+
+  async remove_access(
+    user_id: string,
+    course_id: string,
+  ): Promise<OutStatusDto> {
+    const status = await this.accessRepo.remove(user_id, course_id);
+
+    return { status };
   }
 
   async getAccessesByUserId(

@@ -1,8 +1,9 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
-  Put,
+  Post,
   Query,
   Req,
   UseGuards,
@@ -21,13 +22,19 @@ import { NotFoundError } from '../../errors/not-found-error';
 import { BadRequestError } from '../../errors/bad-request-error';
 import { InGetPaginatedUsers } from './dtos/in-get-paginated-users.dto';
 import { OutGetPaginatedUsersDto } from './dtos/out-get-paginated-users.dto';
+import { AccessService } from '../course/access.service';
+import { OutStatusDto } from 'src/dtos/out-status.dto';
+import { BaseError } from 'src/errors/base-error';
 
 @UseGuards(RolesGuard)
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly accessService: AccessService,
+  ) {}
   @Get('/')
-  @Role('USER')
+  @Role('ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'get all users' })
   async getPaginatedUsers(
@@ -39,7 +46,7 @@ export class UserController {
   }
 
   @Get(':user_id')
-  @Role('USER')
+  @Role('ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'get single user by id' })
   @ApiNotFoundResponse({ type: NotFoundError })
@@ -52,5 +59,41 @@ export class UserController {
     if (user instanceof NotFoundError) return user.throw();
     if (user instanceof BadRequestError) return user.throw();
     return { user };
+  }
+
+  @Post(':user_id/access')
+  @Role('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'grant course access to user' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async grantAccess(
+    @Req() { userId: adminId }: { userId: string },
+    @Param('user_id') user_id: string,
+    @Query('course_id') course_id: string,
+    @Query('level', { transform: (v) => parseInt(v) }) level: number,
+  ): Promise<OutStatusDto> {
+    const user = await this.accessService.createAccess({
+      course_id,
+      level,
+      user_id,
+    });
+    if (user instanceof BaseError) return user.throw();
+    return { status: true };
+  }
+
+  @Delete(':user_id/access')
+  @Role('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'reoke access to course from user' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async revokeAccess(
+    @Req() { userId: adminId }: { userId: string },
+    @Param('user_id') user_id: string,
+    @Query('course_id') course_id: string,
+  ): Promise<OutStatusDto> {
+    const status = await this.accessService.remove_access(user_id, course_id);
+    return status;
   }
 }

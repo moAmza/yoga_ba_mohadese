@@ -13,10 +13,14 @@ import { DuplicateError } from '../../errors/duplicate-error';
 import { InGetPaginatedUsers } from './dtos/in-get-paginated-users.dto';
 import { OutGetPaginatedUsersDto } from './dtos/out-get-paginated-users.dto';
 import { TypeUserDto } from './dtos/type-user.dto';
+import { CourseService } from '../course/course.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepo: UserRepo) {}
+  constructor(
+    private readonly userRepo: UserRepo,
+    private readonly courseService: CourseService,
+  ) {}
 
   async verifyRegisterInput(
     userInfo: InRegisterDto,
@@ -50,7 +54,7 @@ export class UserService {
       ...userInfo,
       createdAt: new Date(),
     });
-    const userFull = UserDao.convertOne(userModel);
+    const userFull = UserDao.convertOne([])(userModel);
 
     return userFull;
   }
@@ -70,7 +74,11 @@ export class UserService {
     if (!isIdValid) return new BadRequestError('InvalidInputId');
     const userModel = await this.userRepo.getById(paramUserId);
     if (!userModel) return new NotFoundError('User');
-    const user = UserDao.convertOne(userModel);
+    const courses = await this.courseService.getAllCourses(
+      userModel._id.toString(),
+    );
+    if (courses instanceof BadRequestError) return courses.throw();
+    const user = UserDao.convertOne(courses)(userModel);
 
     return user;
   }
@@ -85,7 +93,15 @@ export class UserService {
     );
     const res: OutGetPaginatedUsersDto = {
       count: paginatedUserModels.count ?? 0,
-      values: paginatedUserModels.values.map(UserDao.convertOne),
+      values: await Promise.all(
+        paginatedUserModels.values.map(async (user) => {
+          const courses = await this.courseService.getAllCourses(
+            user._id.toString(),
+          );
+          if (courses instanceof BadRequestError) return courses.throw();
+          return UserDao.convertOne(courses)(user);
+        }),
+      ),
     };
 
     return res;

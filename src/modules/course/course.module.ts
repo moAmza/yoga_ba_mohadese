@@ -7,14 +7,16 @@ import { CourseService } from './course.service';
 import { AccessRepo } from './access.repo';
 import { AccessService } from './access.service';
 import { Access, AccessSchema } from './access.schema';
+import { VideoModule } from '../video/video.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
     MongooseModule.forFeature([{ name: Access.name, schema: AccessSchema }]),
+    VideoModule,
   ],
   controllers: [CourseController],
   providers: [CourseService, CourseRepo, AccessRepo, AccessService],
-  exports: [CourseService],
+  exports: [CourseService, AccessService],
 })
 export class CourseModule {}

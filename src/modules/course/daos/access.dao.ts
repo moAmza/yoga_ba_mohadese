@@ -7,7 +7,7 @@ export abstract class AccessDao {
   static convertOne = (model: MongoDoc<Access>): TypeAccessDto => ({
     id: model._id.toString(),
     level: model.level,
-    course_id: model.course_id,
-    user_id: model.user_id,
+    course_id: model.course_id.toString(),
+    user_id: model.user_id.toString(),
   });
 }
