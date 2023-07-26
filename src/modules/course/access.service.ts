@@ -39,7 +39,7 @@ export class AccessService {
   ): Promise<OutStatusDto> {
     const status = await this.accessRepo.remove(
       new mongoose.Types.ObjectId(user_id),
-      course_id,
+      new mongoose.Types.ObjectId(course_id),
     );
 
     return { status };
@@ -71,7 +71,8 @@ export class AccessService {
       new mongoose.Types.ObjectId(userId),
       new mongoose.Types.ObjectId(courseId),
     );
-    if (access.toJSON() === null) return false;
+    console.log(access);
+    if (!access) return false;
     else return true;
   }
 }

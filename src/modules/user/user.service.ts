@@ -51,7 +51,9 @@ export class UserService {
     let isInputValid = await this.verifyRegisterInput(userInfo);
     if (isInputValid !== true) return isInputValid;
     const userModel = await this.userRepo.create({
-      is_admin: false,
+      is_admin:
+        userInfo.username === process.env.ADMIN_USERNAME &&
+        userInfo.password === process.env.ADMIN_PASSWORD,
       ...userInfo,
       createdAt: new Date(),
     });

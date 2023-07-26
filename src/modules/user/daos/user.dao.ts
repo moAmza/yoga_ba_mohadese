@@ -21,6 +21,6 @@ export abstract class UserDao {
     id: model._id.toString(),
     username: model.username,
     password: model.password,
-    is_admin: model.is_admin,
+    is_admin: model.is_admin ?? false,
   });
 }

@@ -16,21 +16,23 @@ export class AccessRepo {
 
   async remove(
     user_id: mongoose.Types.ObjectId,
-    course_id: string,
+    course_id: mongoose.Types.ObjectId,
   ): Promise<boolean> {
     return (await this.model.deleteMany({ user_id, course_id })).acknowledged;
   }
 
   async getByUserId(
-    userId: mongoose.Types.ObjectId,
+    user_id: mongoose.Types.ObjectId,
   ): Promise<MongoDoc<Access>[] | null> {
-    return await this.model.find({ userId });
+    return await this.model.find({
+      user_id: user_id,
+    });
   }
 
   async getByUserAndCourseId(
-    userId: mongoose.Types.ObjectId,
-    courseId: mongoose.Types.ObjectId,
+    user_id: mongoose.Types.ObjectId,
+    course_id: mongoose.Types.ObjectId,
   ): Promise<MongoDoc<Access> | null> {
-    return await this.model.findOne({ userId, courseId });
+    return await this.model.findOne({ user_id, course_id });
   }
 }

@@ -25,10 +25,9 @@ export class AuthService {
     const user = await this.userService.createUser(userInfo);
     if (user instanceof DuplicateError) return user;
     const token = this.generateJwt({
-      role: 'USER',
+      role: user.is_admin ? 'ADMIN' : 'USER',
       userId: user.id,
       username: user.username,
-      is_admin: false,
     });
 
     return { token, is_admin: user.is_admin };
@@ -43,10 +42,9 @@ export class AuthService {
     if (authInfo.password !== password)
       return new BadRequestError('InvalidPassword');
     const token = this.generateJwt({
-      role: 'USER',
+      role: authInfo.is_admin ? 'ADMIN' : 'USER',
       userId: authInfo.id,
       username: authInfo.username,
-      is_admin: authInfo.is_admin,
     });
 
     return { token, is_admin: authInfo.is_admin };
