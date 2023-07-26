@@ -28,23 +28,16 @@ export class AuthService {
       role: 'USER',
       userId: user.id,
       username: user.username,
+      is_admin: false,
     });
 
-    return { token };
+    return { token, is_admin: user.is_admin };
   }
 
   async login({
     username,
     password,
   }: InLoginDto): Promise<OutJwtTokenDto | NotFoundError | BadRequestError> {
-    console.log(process.env);
-    if (
-      username === process.env.ADMIN_USERNAME &&
-      password === process.env.ADMIN_PASSWORD
-    )
-      return {
-        token: this.generateJwt({ role: 'ADMIN', userId: '1', username }),
-      };
     const authInfo = await this.userService.getAuthInfoByUsername(username);
     if (authInfo instanceof NotFoundError) return authInfo;
     if (authInfo.password !== password)
@@ -53,8 +46,9 @@ export class AuthService {
       role: 'USER',
       userId: authInfo.id,
       username: authInfo.username,
+      is_admin: authInfo.is_admin,
     });
 
-    return { token };
+    return { token, is_admin: authInfo.is_admin };
   }
 }

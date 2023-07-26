@@ -14,7 +14,7 @@ import { InAccessCourse } from './dtos/in-create-access.dto';
 import { OutGetCoursesDto } from './dtos/out-get-course.dto';
 import { AccessDao } from './daos/access.dao';
 import { TypeAccessDto } from './dtos/type-access.dto';
-import { OutStatusDto } from 'src/dtos/out-status.dto';
+import { OutStatusDto } from '../../dtos/out-status.dto';
 
 @Injectable()
 export class AccessService {
@@ -37,7 +37,10 @@ export class AccessService {
     user_id: string,
     course_id: string,
   ): Promise<OutStatusDto> {
-    const status = await this.accessRepo.remove(user_id, course_id);
+    const status = await this.accessRepo.remove(
+      new mongoose.Types.ObjectId(user_id),
+      course_id,
+    );
 
     return { status };
   }
@@ -47,7 +50,9 @@ export class AccessService {
   ): Promise<TypeAccessDto[] | NotFoundError | BadRequestError> {
     const isIdValid = mongoose.Types.ObjectId.isValid(userId);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
-    const accessModel = await this.accessRepo.getByUserId(userId);
+    const accessModel = await this.accessRepo.getByUserId(
+      new mongoose.Types.ObjectId(userId),
+    );
     if (!accessModel) return new NotFoundError('Course');
     const access = accessModel.map(AccessDao.convertOne);
 
@@ -62,7 +67,10 @@ export class AccessService {
       mongoose.Types.ObjectId.isValid(courseId) &&
       mongoose.Types.ObjectId.isValid(courseId);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
-    let access = await this.accessRepo.getByUserAndCourseId(userId, courseId);
+    let access = await this.accessRepo.getByUserAndCourseId(
+      new mongoose.Types.ObjectId(userId),
+      new mongoose.Types.ObjectId(courseId),
+    );
     if (access.toJSON() === null) return false;
     else return true;
   }

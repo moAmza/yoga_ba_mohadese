@@ -51,6 +51,7 @@ export class UserService {
     let isInputValid = await this.verifyRegisterInput(userInfo);
     if (isInputValid !== true) return isInputValid;
     const userModel = await this.userRepo.create({
+      is_admin: false,
       ...userInfo,
       createdAt: new Date(),
     });
@@ -72,7 +73,9 @@ export class UserService {
   ): Promise<TypeUserDto | NotFoundError | BadRequestError> {
     const isIdValid = mongoose.Types.ObjectId.isValid(paramUserId);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
-    const userModel = await this.userRepo.getById(paramUserId);
+    const userModel = await this.userRepo.getById(
+      new mongoose.Types.ObjectId(paramUserId),
+    );
     if (!userModel) return new NotFoundError('User');
     const courses = await this.courseService.getAllCourses(
       userModel._id.toString(),
@@ -105,5 +108,9 @@ export class UserService {
     };
 
     return res;
+  }
+
+  async getAdminUsers(): Promise<TypeUserDto[]> {
+    return (await this.userRepo.getAdminUsers()).map(UserDao.convertOne([]));
   }
 }

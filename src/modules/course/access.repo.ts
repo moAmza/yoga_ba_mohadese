@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Access } from './access.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class AccessRepo {
@@ -13,17 +14,22 @@ export class AccessRepo {
     return await this.model.create(userInfo);
   }
 
-  async remove(user_id: string, course_id: string): Promise<boolean> {
+  async remove(
+    user_id: mongoose.Types.ObjectId,
+    course_id: string,
+  ): Promise<boolean> {
     return (await this.model.deleteMany({ user_id, course_id })).acknowledged;
   }
 
-  async getByUserId(userId: string): Promise<MongoDoc<Access>[] | null> {
+  async getByUserId(
+    userId: mongoose.Types.ObjectId,
+  ): Promise<MongoDoc<Access>[] | null> {
     return await this.model.find({ userId });
   }
 
   async getByUserAndCourseId(
-    userId: string,
-    courseId: string,
+    userId: mongoose.Types.ObjectId,
+    courseId: mongoose.Types.ObjectId,
   ): Promise<MongoDoc<Access> | null> {
     return await this.model.findOne({ userId, courseId });
   }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Document, Model, ObjectId, QueryWithHelpers } from 'mongoose';
 import { User } from './user.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UserRepo {
@@ -19,12 +20,14 @@ export class UserRepo {
     return await this.model.findOne({ email });
   }
 
-  async getById(userId: string): Promise<MongoDoc<User> | null> {
+  async getById(
+    userId: mongoose.Types.ObjectId,
+  ): Promise<MongoDoc<User> | null> {
     return await this.model.findById(userId);
   }
 
   async updateProfileImage(
-    userId: string,
+    userId: mongoose.Types.ObjectId,
     profileImage: string,
   ): Promise<MongoDoc<User> | null> {
     return await this.model.findByIdAndUpdate(
@@ -32,6 +35,10 @@ export class UserRepo {
       { $set: { profileImage } },
       { new: true },
     );
+  }
+
+  async getAdminUsers(): Promise<MongoDoc<User>[]> {
+    return await this.model.find({ is_admin: true });
   }
 
   async getPaginatedUsers(

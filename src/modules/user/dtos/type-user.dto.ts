@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { TypeCourseDto } from 'src/modules/course/dtos/type-course.dto';
+import { TypeCourseDto } from '../../../modules/course/dtos/type-course.dto';
 
 export class TypeUserDto {
   @ApiProperty({ required: true, default: 'id' })
@@ -27,4 +27,7 @@ export class TypeUserDto {
 
   @ApiProperty({ required: true, default: new Date() })
   courses: TypeCourseDto[];
+
+  @ApiProperty({ required: true, default: false })
+  is_admin: boolean;
 }

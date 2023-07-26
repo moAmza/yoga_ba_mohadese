@@ -9,4 +9,7 @@ export class TypeAuthInfoDto {
 
   @ApiProperty({ required: true, default: 'test' })
   password: string;
+
+  @ApiProperty({ required: true, default: false })
+  is_admin: boolean;
 }

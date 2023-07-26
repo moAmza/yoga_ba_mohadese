@@ -24,9 +24,9 @@ import { InGetPaginatedCourses } from './dtos/in-get-paginated-courses.dto';
 import { OutGetPaginatedCoursesDto } from './dtos/out-get-paginated-courses.dto';
 import { OutGetCoursesDto } from './dtos/out-get-course.dto';
 import { InCreateCourse } from './dtos/in-create-course.dto';
-import { DuplicateError } from 'src/errors/duplicate-error';
+import { DuplicateError } from '../../errors/duplicate-error';
 import { VideoService } from '../video/video.service';
-import { BaseError } from 'src/errors/base-error';
+import { BaseError } from '../../errors/base-error';
 
 @UseGuards(RolesGuard)
 @Controller('courses')

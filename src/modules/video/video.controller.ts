@@ -18,10 +18,10 @@ import {
 import { NotFoundError } from '../../errors/not-found-error';
 import { BadRequestError } from '../../errors/bad-request-error';
 import { VideoService } from '../video/video.service';
-import { BaseError } from 'src/errors/base-error';
+import { BaseError } from '../../errors/base-error';
 import { OutGetCoursesDto } from '../course/dtos/out-get-course.dto';
 import { InCreateVideo } from './dtos/in-create-video.dto';
-import { DuplicateError } from 'src/errors/duplicate-error';
+import { DuplicateError } from '../../errors/duplicate-error';
 import { CourseService } from '../course/course.service';
 import { OutCreateVideo } from './dtos/out-create-video.dto';
 

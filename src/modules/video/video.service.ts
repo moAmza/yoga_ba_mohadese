@@ -30,7 +30,9 @@ export class VideoService {
   ): Promise<TypeVideoDto[] | NotFoundError | BadRequestError> {
     const isIdValid = mongoose.Types.ObjectId.isValid(courseId);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
-    let videoModels = await this.videoRepo.getByCourseId(courseId);
+    let videoModels = await this.videoRepo.getByCourseId(
+      new mongoose.Types.ObjectId(courseId),
+    );
     return videoModels.map(VideoDao.convertOne);
   }
 }

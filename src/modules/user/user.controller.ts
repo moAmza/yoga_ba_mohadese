@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -23,8 +24,9 @@ import { BadRequestError } from '../../errors/bad-request-error';
 import { InGetPaginatedUsers } from './dtos/in-get-paginated-users.dto';
 import { OutGetPaginatedUsersDto } from './dtos/out-get-paginated-users.dto';
 import { AccessService } from '../course/access.service';
-import { OutStatusDto } from 'src/dtos/out-status.dto';
-import { BaseError } from 'src/errors/base-error';
+import { OutStatusDto } from '../../dtos/out-status.dto';
+import { BaseError } from '../../errors/base-error';
+import { InGrantAccessDto } from './dtos/in-grant-access.dto';
 
 @UseGuards(RolesGuard)
 @Controller('user')
@@ -70,8 +72,7 @@ export class UserController {
   async grantAccess(
     @Req() { userId: adminId }: { userId: string },
     @Param('user_id') user_id: string,
-    @Query('course_id') course_id: string,
-    @Query('level', { transform: (v) => parseInt(v) }) level: number,
+    @Body() { course_id, level }: InGrantAccessDto,
   ): Promise<OutStatusDto> {
     const user = await this.accessService.createAccess({
       course_id,
