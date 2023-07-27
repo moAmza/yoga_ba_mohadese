@@ -22,7 +22,7 @@ export class User {
   email: string;
 
   @Prop({ required: true })
-  phone: number;
+  phone: string;
 
   @Prop({ required: true })
   createdAt: Date = new Date();
