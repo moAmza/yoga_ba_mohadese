@@ -12,7 +12,8 @@ export type FieldNames =
   | 'Email'
   | 'Week'
   | 'Image'
-  | 'Course';
+  | 'Course'
+  | 'Video';
 
 export const translateFieldName = (field: FieldNames): string => {
   switch (field) {
@@ -36,6 +37,8 @@ export const translateFieldName = (field: FieldNames): string => {
       return 'تصویر';
     case 'Course':
       return 'کلاس';
+    case 'Video':
+      return 'ویدئو';
   }
 };
 

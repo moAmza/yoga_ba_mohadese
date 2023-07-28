@@ -12,6 +12,8 @@ import { CourseDao } from './daos/course.dao';
 import { AccessService } from './access.service';
 import { BaseError } from '../../errors/base-error';
 import { UserService } from '../user/user.service';
+import { VideoService } from '../video/video.service';
+import { OutGetCoursesDto } from './dtos/out-get-course.dto';
 
 @Injectable()
 export class CourseService {
@@ -20,6 +22,8 @@ export class CourseService {
     private readonly accessService: AccessService,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+    @Inject(forwardRef(() => VideoService))
+    private readonly videoService: VideoService,
   ) {}
 
   async createCourse(
@@ -42,7 +46,7 @@ export class CourseService {
   async editCourse(
     course_id: string,
     courseInfo: InCreateCourse,
-  ): Promise<TypeCourseDto | BadRequestError | NotFoundError> {
+  ): Promise<OutGetCoursesDto | BadRequestError | NotFoundError> {
     const isIdValid = mongoose.Types.ObjectId.isValid(course_id);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
     await this.courseRepo.editById(
@@ -54,7 +58,9 @@ export class CourseService {
     );
     if (course === null) return new NotFoundError('Course');
     const courseFull = CourseDao.convertOne(course);
-    return courseFull;
+    const videos = await this.videoService.getVideosByCourseId(course.id);
+    if (videos instanceof BaseError) return videos.throw();
+    return { course: { ...courseFull, videos } };
   }
 
   async getCourseById(
@@ -74,9 +80,27 @@ export class CourseService {
     return course;
   }
 
+  async getCoursesWithVidoes(
+    userId: string,
+    courseId: string,
+  ): Promise<OutGetCoursesDto | NotFoundError | BadRequestError> {
+    const course = await this.getCourseById(userId, courseId);
+    if (course instanceof BaseError) return course;
+    const videos = await this.videoService.getVideosByCourseId(course.id);
+    if (videos instanceof BaseError) return videos.throw();
+    return { course: { ...course, videos } };
+  }
+
+  async doesCourseExists(course_id: string): Promise<boolean> {
+    const course = await this.courseRepo.getById(
+      new mongoose.Types.ObjectId(course_id),
+    );
+    return course ? true : false;
+  }
+
   async deleteCourseById(
     courseId: string,
-  ): Promise<TypeCourseDto | NotFoundError | BadRequestError> {
+  ): Promise<OutGetCoursesDto | NotFoundError | BadRequestError> {
     const isIdValid = mongoose.Types.ObjectId.isValid(courseId);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
     const courseModel = await this.courseRepo.deleteById(
@@ -84,8 +108,9 @@ export class CourseService {
     );
     if (!courseModel) return new NotFoundError('Course');
     const course = CourseDao.convertOne(courseModel);
-
-    return course;
+    const videos = await this.videoService.getVideosByCourseId(course.id);
+    if (videos instanceof BaseError) return videos.throw();
+    return { course: { ...course, videos } };
   }
 
   async getAllCourses(

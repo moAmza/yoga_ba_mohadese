@@ -14,7 +14,7 @@ import { UserModule } from '../user/user.module';
   imports: [
     MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
     MongooseModule.forFeature([{ name: Access.name, schema: AccessSchema }]),
-    VideoModule,
+    forwardRef(() => VideoModule),
     forwardRef(() => UserModule),
   ],
   controllers: [CourseController],

@@ -3,6 +3,10 @@ import { IsDate, IsNumber, IsString } from 'class-validator';
 
 export class InCreateVideo {
   @ApiProperty({ required: true, default: 'title' })
+  @IsNumber()
+  num: number;
+
+  @ApiProperty({ required: true, default: 'title' })
   @IsString()
   title: string;
 

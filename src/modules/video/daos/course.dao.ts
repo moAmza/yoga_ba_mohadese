@@ -7,5 +7,6 @@ export abstract class VideoDao {
     course_id: model.course_id.toString(),
     title: model.title,
     link: model.link,
+    num: model.num,
   });
 }

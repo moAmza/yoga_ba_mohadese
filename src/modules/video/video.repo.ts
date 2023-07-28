@@ -23,4 +23,11 @@ export class VideoRepo {
   ): Promise<MongoDoc<Video>[]> {
     return await this.model.find({ course_id });
   }
+
+  async getByNumAndCourseId(
+    course_id: mongoose.Types.ObjectId,
+    num: number,
+  ): Promise<MongoDoc<Video>> {
+    return await this.model.findOne({ course_id, num });
+  }
 }

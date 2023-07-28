@@ -7,6 +7,9 @@ export class Video {
   course_id: mongoose.Types.ObjectId;
 
   @Prop({ required: true })
+  num: number;
+
+  @Prop({ required: true })
   title: string;
 
   @Prop({ required: true })

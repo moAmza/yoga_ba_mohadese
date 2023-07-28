@@ -42,7 +42,7 @@ export class CourseController {
     @Body() videoInfo: InCreateVideo,
   ): Promise<OutCreateVideo> {
     const video = await this.videoService.createVideo(courseId, videoInfo);
-    if (video instanceof DuplicateError) return video.throw();
+    if (video instanceof BaseError) return video.throw();
     return { video };
   }
 }

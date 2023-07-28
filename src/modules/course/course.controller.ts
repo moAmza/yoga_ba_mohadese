@@ -3,12 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
   Query,
   Req,
   UseGuards,
+  forwardRef,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { RolesGuard } from '../../guards/roles.guard';
@@ -32,10 +34,7 @@ import { BaseError } from '../../errors/base-error';
 @UseGuards(RolesGuard)
 @Controller('courses')
 export class CourseController {
-  constructor(
-    private readonly courseService: CourseService,
-    private readonly videoService: VideoService,
-  ) {}
+  constructor(private readonly courseService: CourseService) {}
 
   @Get('/')
   @Role('USER')
@@ -73,12 +72,13 @@ export class CourseController {
     @Req() { userId }: { userId: string },
     @Param('course_id') courseId: string,
   ): Promise<OutGetCoursesDto> {
-    const course = await this.courseService.getCourseById(userId, courseId);
+    const course = await this.courseService.getCoursesWithVidoes(
+      userId,
+      courseId,
+    );
     if (course instanceof NotFoundError) return course.throw();
     if (course instanceof BadRequestError) return course.throw();
-    const videos = await this.videoService.getVideosByCourseId(course.id);
-    if (videos instanceof BaseError) return videos.throw();
-    return { course: { ...course, videos } };
+    return course;
   }
 
   @Delete(':course_id')
@@ -94,9 +94,7 @@ export class CourseController {
     const course = await this.courseService.deleteCourseById(courseId);
     if (course instanceof NotFoundError) return course.throw();
     if (course instanceof BadRequestError) return course.throw();
-    const videos = await this.videoService.getVideosByCourseId(course.id);
-    if (videos instanceof BaseError) return videos.throw();
-    return { course: { ...course, videos } };
+    return course;
   }
 
   @Put(':course_id')
@@ -112,8 +110,6 @@ export class CourseController {
   ): Promise<OutGetCoursesDto> {
     const new_course = await this.courseService.editCourse(courseId, input);
     if (new_course instanceof BaseError) return new_course.throw();
-    const videos = await this.videoService.getVideosByCourseId(new_course.id);
-    if (videos instanceof BaseError) return videos.throw();
-    return { course: { ...new_course, videos } };
+    return new_course;
   }
 }
