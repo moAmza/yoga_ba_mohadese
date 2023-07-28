@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -73,6 +74,24 @@ export class CourseController {
     @Param('course_id') courseId: string,
   ): Promise<OutGetCoursesDto> {
     const course = await this.courseService.getCourseById(userId, courseId);
+    if (course instanceof NotFoundError) return course.throw();
+    if (course instanceof BadRequestError) return course.throw();
+    const videos = await this.videoService.getVideosByCourseId(course.id);
+    if (videos instanceof BaseError) return videos.throw();
+    return { course: { ...course, videos } };
+  }
+
+  @Delete(':course_id')
+  @Role('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'delete single course by id' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async deleteCourse(
+    @Req() { userId }: { userId: string },
+    @Param('course_id') courseId: string,
+  ): Promise<OutGetCoursesDto> {
+    const course = await this.courseService.deleteCourseById(courseId);
     if (course instanceof NotFoundError) return course.throw();
     if (course instanceof BadRequestError) return course.throw();
     const videos = await this.videoService.getVideosByCourseId(course.id);

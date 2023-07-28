@@ -74,6 +74,20 @@ export class CourseService {
     return course;
   }
 
+  async deleteCourseById(
+    courseId: string,
+  ): Promise<TypeCourseDto | NotFoundError | BadRequestError> {
+    const isIdValid = mongoose.Types.ObjectId.isValid(courseId);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+    const courseModel = await this.courseRepo.deleteById(
+      new mongoose.Types.ObjectId(courseId),
+    );
+    if (!courseModel) return new NotFoundError('Course');
+    const course = CourseDao.convertOne(courseModel);
+
+    return course;
+  }
+
   async getAllCourses(
     userId: string,
   ): Promise<TypeCourseDto[] | BadRequestError> {
@@ -85,7 +99,7 @@ export class CourseService {
       ),
     );
 
-    return courses.map(CourseDao.convertOne);
+    return courses.filter((x) => x).map(CourseDao.convertOne);
   }
 
   async getPaginatedCourses(

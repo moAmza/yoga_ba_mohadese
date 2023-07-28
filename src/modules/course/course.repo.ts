@@ -28,6 +28,12 @@ export class CourseRepo {
     return await this.model.findById(course_id);
   }
 
+  async deleteById(
+    course_id: mongoose.Types.ObjectId,
+  ): Promise<MongoDoc<Course> | null> {
+    return await this.model.findOneAndDelete({ _id: course_id });
+  }
+
   async getPaginatedCourses(
     limit: number,
     skip: number,
