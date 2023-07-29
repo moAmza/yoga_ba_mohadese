@@ -13,6 +13,9 @@ export class TypeCourseDto {
   @ApiProperty({ required: true, default: 'title' })
   title: string;
 
+  @ApiProperty({ required: true, default: 'title' })
+  description: string;
+
   @ApiProperty({ required: true, default: new Date() })
   start_date: Date;
 

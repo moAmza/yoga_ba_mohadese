@@ -8,6 +8,7 @@ import { OutJwtTokenDto } from './dtos/out-jwt-token.dto';
 import { DuplicateError } from '../../errors/duplicate-error';
 import { BadRequestError } from '../../errors/bad-request-error';
 import { NotFoundError } from '../../errors/not-found-error';
+import { BaseError } from 'src/errors/base-error';
 
 @Injectable()
 export class AuthService {
@@ -19,11 +20,11 @@ export class AuthService {
 
   async register(
     userInfo: InRegisterDto,
-  ): Promise<OutJwtTokenDto | DuplicateError> {
+  ): Promise<OutJwtTokenDto | DuplicateError | BadRequestError> {
     const isInputValid = await this.userService.verifyRegisterInput(userInfo);
     if (isInputValid !== true) return isInputValid;
     const user = await this.userService.createUser(userInfo);
-    if (user instanceof DuplicateError) return user;
+    if (user instanceof BaseError) return user;
     const token = this.generateJwt({
       role: user.is_admin ? 'ADMIN' : 'USER',
       userId: user.id,

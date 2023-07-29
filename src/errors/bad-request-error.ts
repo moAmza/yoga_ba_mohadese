@@ -30,6 +30,8 @@ const getMessage = (errType: BadRequestErrorTypes): string => {
       return 'شناسه وارد شده نامعتبر است';
     case 'MoreThanRoleLimit':
       return 'شما حداکثر میزان بازیکنان در این نقش را دارید';
+    case 'RequiredEmailOrPhone':
+      return 'وارد کردن ایمیل و یا تلفن اجباریست';
     default:
       return 'UNTRANSLATED_ERROR: ' + errType;
   }

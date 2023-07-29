@@ -10,6 +10,10 @@ export class InCreateCourse {
   @IsString()
   title: string;
 
+  @ApiProperty({ required: true, default: 'description' })
+  @IsString()
+  description: string;
+
   @ApiProperty({ required: true, default: new Date(), type: 'date' })
   @IsString()
   start_date: Date;

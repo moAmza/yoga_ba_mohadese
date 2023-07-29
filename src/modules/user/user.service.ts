@@ -24,12 +24,15 @@ export class UserService {
 
   async verifyRegisterInput(
     userInfo: InRegisterDto,
-  ): Promise<DuplicateError | true> {
+  ): Promise<DuplicateError | BadRequestError | true> {
     if (!(await this.isUsernameAvailable(userInfo.username)))
       return new DuplicateError('Username');
-    if (!(await this.isEmailAvailable(userInfo.email)))
+    if (userInfo.email && !(await this.isEmailAvailable(userInfo.email)))
       return new DuplicateError('Email');
-
+    if (userInfo.phone && !(await this.isPhoneAvailable(userInfo.phone)))
+      return new DuplicateError('Phone');
+    if (!userInfo.email && !userInfo.phone)
+      return new BadRequestError('RequiredEmailOrPhone');
     return true;
   }
 
@@ -45,9 +48,15 @@ export class UserService {
     return !userModel;
   }
 
+  async isPhoneAvailable(phone: string): Promise<boolean> {
+    const userModel = await this.userRepo.getByPhone(phone);
+
+    return !userModel;
+  }
+
   async createUser(
     userInfo: InRegisterDto,
-  ): Promise<TypeUserDto | DuplicateError> {
+  ): Promise<TypeUserDto | BadRequestError | DuplicateError> {
     let isInputValid = await this.verifyRegisterInput(userInfo);
     if (isInputValid !== true) return isInputValid;
     const userModel = await this.userRepo.create({

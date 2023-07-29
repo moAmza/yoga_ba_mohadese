@@ -14,7 +14,8 @@ export type BadRequestErrorTypes =
   | 'DifferentRole'
   | 'SameIsPlaying'
   | 'InvalidImageType'
-  | 'InvalidInputId';
+  | 'InvalidInputId'
+  | 'RequiredEmailOrPhone';
 
 export type ErrorTypes =
   | BadRequestErrorTypes

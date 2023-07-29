@@ -6,6 +6,7 @@ export abstract class CourseDao {
     id: model._id.toString(),
     level: model.level,
     title: model.title,
+    description: model.description,
     start_date: model.start_date,
     end_date: model.end_date,
   });

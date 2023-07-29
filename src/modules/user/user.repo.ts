@@ -16,6 +16,10 @@ export class UserRepo {
     return await this.model.findOne({ username });
   }
 
+  async getByPhone(phone: string): Promise<MongoDoc<User> | null> {
+    return await this.model.findOne({ phone });
+  }
+
   async getByEmail(email: string): Promise<MongoDoc<User> | null> {
     return await this.model.findOne({ email });
   }
@@ -47,6 +51,7 @@ export class UserRepo {
   ): Promise<PaginatedType<MongoDoc<User>>> {
     return (
       await this.model.aggregate([
+        { $match: { is_admin: { $ne: true } } },
         {
           $facet: {
             values: [{ $skip: skip }, { $limit: limit }],

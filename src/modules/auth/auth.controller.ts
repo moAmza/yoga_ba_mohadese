@@ -12,6 +12,7 @@ import {
 import { DuplicateError } from '../../errors/duplicate-error';
 import { NotFoundError } from '../../errors/not-found-error';
 import { BadRequestError } from '../../errors/bad-request-error';
+import { BaseError } from 'src/errors/base-error';
 
 @UseGuards(RolesGuard)
 @Controller('auth')
@@ -23,7 +24,7 @@ export class AuthController {
   @ApiBadRequestResponse({ type: DuplicateError })
   async register(@Body() userInfo: InRegisterDto): Promise<OutJwtTokenDto> {
     const data = await this.authService.register(userInfo);
-    if (data instanceof DuplicateError) return data.throw();
+    if (data instanceof BaseError) return data.throw();
     return data;
   }
 

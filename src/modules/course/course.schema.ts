@@ -10,6 +10,9 @@ export class Course {
   title: string;
 
   @Prop({ required: true })
+  description: string;
+
+  @Prop({ required: true })
   start_date: Date;
 
   @Prop({ required: true })
