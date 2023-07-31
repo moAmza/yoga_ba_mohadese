@@ -8,6 +8,7 @@ import { TypeVideoDto } from './dtos/type-video.dto';
 import { InCreateVideo } from './dtos/in-create-video.dto';
 import { VideoDao } from './daos/course.dao';
 import { CourseService } from '../course/course.service';
+import { OutStatusDto } from 'src/dtos/out-status.dto';
 
 @Injectable()
 export class VideoService {
@@ -48,5 +49,16 @@ export class VideoService {
       new mongoose.Types.ObjectId(courseId),
     );
     return videoModels.map(VideoDao.convertOne);
+  }
+
+  async deleteVideo(
+    vidoeId: string,
+  ): Promise<OutStatusDto | NotFoundError | BadRequestError> {
+    const isIdValid = mongoose.Types.ObjectId.isValid(vidoeId);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+    let videoModels = await this.videoRepo.deleteById(
+      new mongoose.Types.ObjectId(vidoeId),
+    );
+    return { status: true };
   }
 }

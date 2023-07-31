@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -24,13 +25,14 @@ import { InCreateVideo } from './dtos/in-create-video.dto';
 import { DuplicateError } from '../../errors/duplicate-error';
 import { CourseService } from '../course/course.service';
 import { OutCreateVideo } from './dtos/out-create-video.dto';
+import { OutStatusDto } from 'src/dtos/out-status.dto';
 
 @UseGuards(RolesGuard)
-@Controller('courses')
+@Controller('')
 export class CourseController {
   constructor(private readonly videoService: VideoService) {}
 
-  @Post(':course_id/videos')
+  @Post('courses/:course_id/videos')
   @Role('ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'create new video' })
@@ -44,5 +46,20 @@ export class CourseController {
     const video = await this.videoService.createVideo(courseId, videoInfo);
     if (video instanceof BaseError) return video.throw();
     return { video };
+  }
+
+  @Delete('videos/:video_id')
+  @Role('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'remove video by id' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async deleteVideo(
+    @Req() { userId }: { userId: string },
+    @Param('video_id') videoId: string,
+  ): Promise<OutStatusDto> {
+    const video = await this.videoService.deleteVideo(videoId);
+    if (video instanceof BaseError) return video.throw();
+    return { status: true };
   }
 }

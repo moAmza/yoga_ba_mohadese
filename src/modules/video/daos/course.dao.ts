@@ -8,5 +8,6 @@ export abstract class VideoDao {
     title: model.title,
     link: model.link,
     num: model.num,
+    thumbnail: model.thumbnail,
   });
 }

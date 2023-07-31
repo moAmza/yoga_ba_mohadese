@@ -16,6 +16,9 @@ export class TypeVideoDto {
   @ApiProperty({ required: true, default: 'www.google.com' })
   link: string;
 
+  @ApiProperty({ required: true, default: 'www.google.com' })
+  thumbnail: string;
+
   @ApiProperty({ required: true, default: 1 })
   num: number;
 }

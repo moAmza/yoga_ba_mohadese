@@ -13,4 +13,8 @@ export class InCreateVideo {
   @ApiProperty({ required: true, default: 'www.google.com' })
   @IsString()
   link: string;
+
+  @ApiProperty({ required: true, default: 'www.google.com' })
+  @IsString()
+  thumbnail: string;
 }

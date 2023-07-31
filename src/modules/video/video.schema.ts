@@ -15,6 +15,9 @@ export class Video {
   @Prop({ required: true })
   link: string;
 
+  @Prop({ required: true })
+  thumbnail: string;
+
   @Prop()
   deletedAt?: Date;
 }
