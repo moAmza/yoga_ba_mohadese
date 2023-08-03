@@ -29,14 +29,17 @@ export class CourseService {
   async createCourse(
     courseInfo: InCreateCourse,
   ): Promise<TypeCourseDto | DuplicateError> {
-    const courseModel = await this.courseRepo.create(courseInfo);
+    const courseModel = await this.courseRepo.create({
+      ...courseInfo,
+      end_date:
+        courseInfo.level === 1 ? new Date(2100, 1) : courseInfo.end_date,
+    });
     const courseFull = CourseDao.convertOne(courseModel);
     const access = await (
       await this.userService.getAdminUsers()
     ).map((user) =>
       this.accessService.createAccess({
         course_id: courseFull.id,
-        level: 1,
         user_id: user.id,
       }),
     );

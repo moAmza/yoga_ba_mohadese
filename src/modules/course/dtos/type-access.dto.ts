@@ -6,10 +6,6 @@ export class TypeAccessDto {
   @IsString()
   id: string;
 
-  @ApiProperty({ required: true, default: 'level' })
-  @IsNumber()
-  level: number;
-
   @ApiProperty({ required: true, default: 'course_id' })
   @IsString()
   course_id: string;

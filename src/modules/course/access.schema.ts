@@ -4,9 +4,6 @@ import mongoose from 'mongoose';
 @Schema()
 export class Access {
   @Prop({ required: true })
-  level: number;
-
-  @Prop({ required: true })
   course_id: mongoose.Types.ObjectId;
 
   @Prop({ required: true })

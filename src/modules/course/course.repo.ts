@@ -25,7 +25,10 @@ export class CourseRepo {
   async getById(
     course_id: mongoose.Types.ObjectId,
   ): Promise<MongoDoc<Course> | null> {
-    return await this.model.findById(course_id);
+    return await this.model.findOne({
+      _id: course_id,
+      end_date: { $gt: new Date().toISOString() },
+    });
   }
 
   async deleteById(
@@ -40,6 +43,7 @@ export class CourseRepo {
   ): Promise<PaginatedType<MongoDoc<Course>>> {
     return (
       await this.model.aggregate([
+        { $match: { end_date: { $gt: new Date().toISOString() } } },
         {
           $facet: {
             values: [{ $skip: skip }, { $limit: limit }],

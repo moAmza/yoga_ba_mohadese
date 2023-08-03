@@ -47,6 +47,18 @@ export class UserController {
     return users;
   }
 
+  @Get('/my')
+  @Role('USER')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'get my user info' })
+  async getMyUser(
+    @Req() { userId }: { userId: string },
+  ): Promise<OutGetUserDto> {
+    const user = await this.userService.getUserByid(userId);
+    if (user instanceof BaseError) return user.throw();
+    return { user };
+  }
+
   @Get(':user_id')
   @Role('ADMIN')
   @ApiBearerAuth()
@@ -76,7 +88,6 @@ export class UserController {
   ): Promise<OutStatusDto> {
     const user = await this.accessService.createAccess({
       course_id,
-      level,
       user_id,
     });
     if (user instanceof BaseError) return user.throw();
