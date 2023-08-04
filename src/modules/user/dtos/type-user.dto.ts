@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { TypeCourseDto } from '../../../modules/course/dtos/type-course.dto';
+import { TypeCourseDto } from '../../course/dtos/type-course.dto';
 
 export class TypeUserDto {
   @ApiProperty({ required: true, default: 'id' })

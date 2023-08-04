@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
+  app.enableCors();
   configSwagger(app);
 
   UserSchema.index({ username: 'text', firstname: 'text', lastname: 'text' });

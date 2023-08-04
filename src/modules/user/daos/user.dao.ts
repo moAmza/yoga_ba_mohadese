@@ -1,4 +1,4 @@
-import { TypeCourseDto } from '../../../modules/course/dtos/type-course.dto';
+import { TypeCourseDto } from '../../course/dtos/type-course.dto';
 import { TypeAuthInfoDto } from '../dtos/type-auth-user.dto';
 import { TypeUserDto } from '../dtos/type-user.dto';
 import { User } from '../user.schema';
