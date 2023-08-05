@@ -6,9 +6,4 @@ export class InGrantAccessDto {
   @ApiProperty({ required: false, default: 'id' })
   @IsString()
   course_id: string;
-
-  @ApiProperty({ required: false, default: 20 })
-  @Type(() => Number)
-  @IsNumber()
-  level: number;
 }

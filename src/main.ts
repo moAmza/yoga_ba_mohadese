@@ -7,10 +7,10 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   console.log(`mongodb://${process.env.MONGO_HOST}/nest`);
 
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  app.enableCors();
   configSwagger(app);
 
   UserSchema.index({ username: 'text', firstname: 'text', lastname: 'text' });

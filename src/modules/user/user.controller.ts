@@ -84,7 +84,7 @@ export class UserController {
   async grantAccess(
     @Req() { userId: adminId }: { userId: string },
     @Param('user_id') user_id: string,
-    @Body() { course_id, level }: InGrantAccessDto,
+    @Body() { course_id }: InGrantAccessDto,
   ): Promise<OutStatusDto> {
     const user = await this.accessService.createAccess({
       course_id,
