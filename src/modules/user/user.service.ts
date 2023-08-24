@@ -99,11 +99,12 @@ export class UserService {
 
   async getPaginatedUsers(
     userId: string,
-    { page, num }: InGetPaginatedUsers,
+    { page, num, search }: InGetPaginatedUsers,
   ): Promise<OutGetPaginatedUsersDto> {
     const paginatedUserModels = await this.userRepo.getPaginatedUsers(
       num,
       (page - 1) * num,
+      search,
     );
     const res: OutGetPaginatedUsersDto = {
       count: paginatedUserModels.count ?? 0,

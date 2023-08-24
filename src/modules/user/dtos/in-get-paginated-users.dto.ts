@@ -16,4 +16,9 @@ export class InGetPaginatedUsers implements InPaginatedDto {
   @IsNumber()
   @IsOptional()
   num: number = 20;
+
+  @ApiProperty({ required: false, default: '' })
+  @IsString()
+  @IsOptional()
+  search: string = '';
 }

@@ -38,7 +38,7 @@ export class UserController {
   @Get('/')
   @Role('ADMIN')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'get all users' })
+  @ApiOperation({ summary: 'search in all users' })
   async getPaginatedUsers(
     @Req() { userId }: { userId: string },
     @Query() input: InGetPaginatedUsers,

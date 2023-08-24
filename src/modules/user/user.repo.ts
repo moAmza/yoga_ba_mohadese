@@ -48,10 +48,22 @@ export class UserRepo {
   async getPaginatedUsers(
     limit: number,
     skip: number,
+    search: string,
   ): Promise<PaginatedType<MongoDoc<User>>> {
     return (
       await this.model.aggregate([
         { $match: { is_admin: { $ne: true } } },
+        {
+          $match: {
+            $or: [
+              { username: new RegExp(search) },
+              { firstname: new RegExp(search) },
+              { lastname: new RegExp(search) },
+              { email: new RegExp(search) },
+              { phone: new RegExp(search) },
+            ],
+          },
+        },
         {
           $facet: {
             values: [{ $skip: skip }, { $limit: limit }],
