@@ -26,6 +26,7 @@ import { DuplicateError } from '../../errors/duplicate-error';
 import { CourseService } from '../course/course.service';
 import { OutCreateVideo } from './dtos/out-create-video.dto';
 import { OutStatusDto } from 'src/dtos/out-status.dto';
+import { OutCounter } from './dtos/out-counter.dto copy';
 
 @UseGuards(RolesGuard)
 @Controller('')
@@ -61,5 +62,41 @@ export class CourseController {
     const video = await this.videoService.deleteVideo(videoId);
     if (video instanceof BaseError) return video.throw();
     return { status: true };
+  }
+
+  @Get('videos/:video_id/view_count')
+  @Role('USER')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'get video view count for user' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async getWatchCount(
+    @Req() { userId }: { userId: string },
+    @Param('video_id') videoId: string,
+  ): Promise<OutCounter> {
+    const view_count = await this.videoService.getVideosViewCount(
+      userId,
+      videoId,
+    );
+    if (view_count instanceof BaseError) return view_count.throw();
+    return { view_count };
+  }
+
+  @Post('videos/:video_id/view_count')
+  @Role('USER')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'increase video view count for user' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async increaseWatchCount(
+    @Req() { userId }: { userId: string },
+    @Param('video_id') videoId: string,
+  ): Promise<OutCounter> {
+    const view_count = await this.videoService.increaseViewCount(
+      userId,
+      videoId,
+    );
+    if (view_count instanceof BaseError) return view_count.throw();
+    return { view_count };
   }
 }

@@ -9,11 +9,13 @@ import { InCreateVideo } from './dtos/in-create-video.dto';
 import { VideoDao } from './daos/course.dao';
 import { CourseService } from '../course/course.service';
 import { OutStatusDto } from 'src/dtos/out-status.dto';
+import { CounterRepo } from './counter.repo';
 
 @Injectable()
 export class VideoService {
   constructor(
     private readonly videoRepo: VideoRepo,
+    private readonly counterRepo: CounterRepo,
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
   ) {}
@@ -60,5 +62,36 @@ export class VideoService {
       new mongoose.Types.ObjectId(vidoeId),
     );
     return { status: true };
+  }
+
+  async getVideosViewCount(
+    userId: string,
+    videoId: string,
+  ): Promise<number | BadRequestError> {
+    const isIdValid =
+      mongoose.Types.ObjectId.isValid(userId) &&
+      mongoose.Types.ObjectId.isValid(videoId);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+    let videoCount = await this.counterRepo.getCountByVideoAndUserId(
+      new mongoose.Types.ObjectId(userId),
+      new mongoose.Types.ObjectId(videoId),
+    );
+    return videoCount;
+  }
+
+  async increaseViewCount(
+    userId: string,
+    vidoeId: string,
+  ): Promise<number | BadRequestError> {
+    const isIdValid =
+      mongoose.Types.ObjectId.isValid(vidoeId) &&
+      mongoose.Types.ObjectId.isValid(userId);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+    let counterModel = await this.counterRepo.create({
+      video_id: new mongoose.Types.ObjectId(vidoeId),
+      user_id: new mongoose.Types.ObjectId(userId),
+    });
+
+    return this.getVideosViewCount(userId, vidoeId);
   }
 }
