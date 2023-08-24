@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNumber,
@@ -10,6 +11,7 @@ import {
 export class InRegisterDto {
   @ApiProperty({ required: true, default: 'username' })
   @IsString()
+  @Transform((param) => param.value.toLowerCase())
   username: string;
 
   @ApiProperty({ required: true, default: 'password' })
@@ -28,6 +30,7 @@ export class InRegisterDto {
   @IsOptional()
   @IsString()
   @IsEmail()
+  @Transform((param) => param.value.toLowerCase())
   email?: string;
 
   @ApiProperty({ required: false, default: '09120000000' })
