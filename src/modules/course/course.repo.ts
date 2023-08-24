@@ -31,6 +31,12 @@ export class CourseRepo {
     });
   }
 
+  async getLevelZeroCourses(): Promise<MongoDoc<Course>[]> {
+    return await this.model.find({
+      level: 0,
+    });
+  }
+
   async deleteById(
     course_id: mongoose.Types.ObjectId,
   ): Promise<MongoDoc<Course> | null> {
