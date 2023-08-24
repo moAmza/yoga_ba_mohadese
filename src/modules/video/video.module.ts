@@ -7,12 +7,14 @@ import { CourseController } from './video.controller';
 import { CourseModule } from '../course/course.module';
 import { CounterRepo } from './counter.repo';
 import { Counter, CounterSchema } from './counter.schema';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Video.name, schema: VideoSchema }]),
     MongooseModule.forFeature([{ name: Counter.name, schema: CounterSchema }]),
     forwardRef(() => CourseModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [CourseController],
   providers: [VideoService, VideoRepo, CounterRepo],

@@ -89,7 +89,10 @@ export class CourseService {
   ): Promise<OutGetCoursesDto | NotFoundError | BadRequestError> {
     const course = await this.getCourseById(userId, courseId);
     if (course instanceof BaseError) return course;
-    const videos = await this.videoService.getVideosByCourseId(course.id);
+    const videos = await this.videoService.getVideosByUserIdAndCourseId(
+      userId,
+      course.id,
+    );
     if (videos instanceof BaseError) return videos.throw();
     return { course: { ...course, videos } };
   }

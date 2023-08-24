@@ -10,6 +10,8 @@ import { VideoDao } from './daos/course.dao';
 import { CourseService } from '../course/course.service';
 import { OutStatusDto } from 'src/dtos/out-status.dto';
 import { CounterRepo } from './counter.repo';
+import { UserService } from '../user/user.service';
+import { BaseError } from 'src/errors/base-error';
 
 @Injectable()
 export class VideoService {
@@ -18,6 +20,8 @@ export class VideoService {
     private readonly counterRepo: CounterRepo,
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
   ) {}
 
   async createVideo(
@@ -53,6 +57,28 @@ export class VideoService {
     return videoModels.map(VideoDao.convertOne);
   }
 
+  async getVideosByUserIdAndCourseId(
+    userId: string,
+    courseId: string,
+  ): Promise<TypeVideoDto[] | NotFoundError | BadRequestError> {
+    const isIdValid = mongoose.Types.ObjectId.isValid(courseId);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+    let videoModels = await this.videoRepo.getByCourseId(
+      new mongoose.Types.ObjectId(courseId),
+    );
+    return (
+      await Promise.all(
+        videoModels.map(VideoDao.convertOne).map(async (video) => ({
+          video,
+          view_count: await this.getVideosViewCount(userId, video.id),
+        })),
+      )
+    )
+      .filter(({ view_count }) => typeof view_count === 'number')
+      .filter(({ view_count }) => (view_count as number) < 5)
+      .map(({ video }) => video);
+  }
+
   async deleteVideo(
     vidoeId: string,
   ): Promise<OutStatusDto | NotFoundError | BadRequestError> {
@@ -82,11 +108,14 @@ export class VideoService {
   async increaseViewCount(
     userId: string,
     vidoeId: string,
-  ): Promise<number | BadRequestError> {
+  ): Promise<number | BadRequestError | NotFoundError> {
     const isIdValid =
       mongoose.Types.ObjectId.isValid(vidoeId) &&
       mongoose.Types.ObjectId.isValid(userId);
     if (!isIdValid) return new BadRequestError('InvalidInputId');
+    const user = await this.userService.getUserByid(userId);
+    if (user instanceof BaseError) return user;
+    if (user.is_admin) return 0;
     let counterModel = await this.counterRepo.create({
       video_id: new mongoose.Types.ObjectId(vidoeId),
       user_id: new mongoose.Types.ObjectId(userId),
