@@ -23,10 +23,11 @@ export class TicketRepo {
   async getPaginatedTicket(
     limit: number,
     skip: number,
-    typd: string,
+    type: string,
   ): Promise<PaginatedType<MongoDoc<Ticket>>> {
     return (
       await this.model.aggregate([
+        { $match: { type: type } },
         {
           $facet: {
             values: [{ $skip: skip }, { $limit: limit }],
