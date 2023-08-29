@@ -21,8 +21,8 @@ export class User {
   @Prop({ required: false })
   email?: string;
 
-  @Prop({ required: false })
-  phone?: string;
+  @Prop({ required: true })
+  phone: string;
 
   @Prop({ required: true })
   createdAt: Date = new Date();

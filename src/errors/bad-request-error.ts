@@ -32,6 +32,8 @@ const getMessage = (errType: BadRequestErrorTypes): string => {
       return 'شما حداکثر میزان بازیکنان در این نقش را دارید';
     case 'RequiredEmailOrPhone':
       return 'وارد کردن ایمیل و یا تلفن اجباریست';
+    case 'InvalidTicketTypeForForgotPasswordTicket':
+      return 'تایپ تیکت انتخاب شده forgot_password نیست';
     default:
       return 'UNTRANSLATED_ERROR: ' + errType;
   }

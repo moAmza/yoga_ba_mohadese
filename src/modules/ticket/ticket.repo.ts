@@ -20,6 +20,12 @@ export class TicketRepo {
     return await this.model.findOneAndDelete({ _id: ticket });
   }
 
+  async getById(
+    ticket_id: mongoose.Types.ObjectId,
+  ): Promise<MongoDoc<Ticket> | null> {
+    return await this.model.findById(ticket_id);
+  }
+
   async getPaginatedTicket(
     limit: number,
     skip: number,

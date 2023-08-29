@@ -45,6 +45,16 @@ export class UserRepo {
     return await this.model.find({ is_admin: true });
   }
 
+  async updatePasswordWithPhone(
+    new_password: string,
+    phone: string,
+  ): Promise<MongoDoc<User> | null> {
+    return await this.model.findOneAndUpdate(
+      { phone },
+      { $set: { password: new_password } },
+    );
+  }
+
   async getPaginatedUsers(
     limit: number,
     skip: number,

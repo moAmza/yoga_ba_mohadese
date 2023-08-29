@@ -15,7 +15,8 @@ export type BadRequestErrorTypes =
   | 'SameIsPlaying'
   | 'InvalidImageType'
   | 'InvalidInputId'
-  | 'RequiredEmailOrPhone';
+  | 'RequiredEmailOrPhone'
+  | 'InvalidTicketTypeForForgotPasswordTicket';
 
 export type ErrorTypes =
   | BadRequestErrorTypes

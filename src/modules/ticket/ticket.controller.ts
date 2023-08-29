@@ -30,6 +30,8 @@ import { InCreateTicket } from './dtos/in-create-ticket.dto';
 import { DuplicateError } from '../../errors/duplicate-error';
 import { VideoService } from '../video/video.service';
 import { BaseError } from '../../errors/base-error';
+import { InResolveForgetPassword } from './dtos/in-resolve-forget-password.dto';
+import { OutGetUserDto } from '../user/dtos/out-get-user.dto';
 
 @UseGuards(RolesGuard)
 @Controller('ticket')
@@ -71,6 +73,22 @@ export class TicketController {
     @Param('ticket_id') ticket_id: string,
   ): Promise<OutGetTicketDto> {
     const ticket = await this.ticketService.deleteTicketById(ticket_id);
+    if (ticket instanceof NotFoundError) return ticket.throw();
+    if (ticket instanceof BadRequestError) return ticket.throw();
+    return ticket;
+  }
+
+  @Post('resolve/forgot_password')
+  @Role('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'resolve forget password ticket' })
+  @ApiNotFoundResponse({ type: NotFoundError })
+  @ApiBadRequestResponse({ type: BadRequestError })
+  async resolveForgetPasswordTicket(
+    @Req() { userId }: { userId: string },
+    @Body() input: InResolveForgetPassword,
+  ): Promise<OutGetUserDto> {
+    const ticket = await this.ticketService.resolveTicket(input);
     if (ticket instanceof NotFoundError) return ticket.throw();
     if (ticket instanceof BadRequestError) return ticket.throw();
     return ticket;

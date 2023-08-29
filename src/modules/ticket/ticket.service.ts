@@ -11,10 +11,16 @@ import { InCreateTicket as InCreateTicket } from './dtos/in-create-ticket.dto';
 import { TicketDao } from './daos/course.dao';
 import { BaseError } from '../../errors/base-error';
 import { OutGetTicketDto } from './dtos/out-get-ticket.dto';
+import { InResolveForgetPassword } from './dtos/in-resolve-forget-password.dto';
+import { UserService } from '../user/user.service';
+import { OutGetUserDto } from '../user/dtos/out-get-user.dto';
 
 @Injectable()
 export class TicketService {
-  constructor(private readonly ticketRepo: TicketRepo) {}
+  constructor(
+    private readonly ticketRepo: TicketRepo,
+    private readonly userService: UserService,
+  ) {}
 
   async createTicket(
     ticketInfo: InCreateTicket,
@@ -53,5 +59,32 @@ export class TicketService {
     };
 
     return res;
+  }
+
+  async resolveTicket(
+    input: InResolveForgetPassword,
+  ): Promise<OutGetUserDto | BadRequestError | NotFoundError> {
+    const isIdValid = mongoose.Types.ObjectId.isValid(input.ticket_id);
+    if (!isIdValid) return new BadRequestError('InvalidInputId');
+
+    const ticket = await this.ticketRepo.getById(
+      new mongoose.Types.ObjectId(input.ticket_id),
+    );
+
+    if (!ticket) return new NotFoundError('Ticket');
+
+    if (ticket.type !== 'forgot_password')
+      return new BadRequestError('InvalidTicketTypeForForgotPasswordTicket');
+
+    let new_user = await this.userService.updatePasswordWithPhone(
+      input.new_password,
+      ticket.phone,
+    );
+
+    let deleted_ticket = await this.deleteTicketById(ticket.id);
+
+    if (new_user instanceof BaseError) return new_user;
+
+    return { user: new_user };
   }
 }

@@ -134,4 +134,13 @@ export class UserService {
   async getAdminUsers(): Promise<TypeUserDto[]> {
     return (await this.userRepo.getAdminUsers()).map(UserDao.convertOne([]));
   }
+
+  async updatePasswordWithPhone(
+    password: string,
+    phone: string,
+  ): Promise<TypeUserDto | NotFoundError> {
+    const user = await this.userRepo.updatePasswordWithPhone(password, phone);
+    if (!user) return new NotFoundError('User');
+    return UserDao.convertOne([])(user);
+  }
 }
