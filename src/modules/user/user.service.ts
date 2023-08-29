@@ -73,10 +73,19 @@ export class UserService {
 
   async getAuthInfoByUsername(
     username: string,
-  ): Promise<TypeAuthInfoDto | NotFoundError> {
+  ): Promise<TypeAuthInfoDto | null> {
     const userModel = await this.userRepo.getByUsername(username);
-    if (!userModel) return new NotFoundError('User');
-    return UserDao.convertOneToAuthInfo(userModel);
+    return userModel ? UserDao.convertOneToAuthInfo(userModel) : null;
+  }
+
+  async getAuthInfoByPhone(phone: string): Promise<TypeAuthInfoDto | null> {
+    const userModel = await this.userRepo.getByPhone(phone);
+    return userModel ? UserDao.convertOneToAuthInfo(userModel) : null;
+  }
+
+  async getAuthInfoByEmail(email: string): Promise<TypeAuthInfoDto | null> {
+    const userModel = await this.userRepo.getByEmail(email);
+    return userModel ? UserDao.convertOneToAuthInfo(userModel) : null;
   }
 
   async getUserByid(

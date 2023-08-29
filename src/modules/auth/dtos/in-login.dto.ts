@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 export class InLoginDto {
   @ApiProperty({ required: true, default: 'username' })
   @IsString()
-  username: string;
+  validator: string;
 
   @ApiProperty({ required: true, default: 'password' })
   @IsString()

@@ -6,16 +6,19 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
+  MinLength,
 } from 'class-validator';
 
 export class InRegisterDto {
   @ApiProperty({ required: true, default: 'username' })
   @IsString()
+  @MinLength(8)
   @Transform((param) => param.value.toLowerCase())
   username: string;
 
   @ApiProperty({ required: true, default: 'password' })
   @IsString()
+  @MinLength(8)
   password: string;
 
   @ApiProperty({ required: true, default: 'firstname' })

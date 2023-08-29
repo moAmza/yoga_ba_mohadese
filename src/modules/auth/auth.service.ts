@@ -35,11 +35,14 @@ export class AuthService {
   }
 
   async login({
-    username,
+    validator,
     password,
   }: InLoginDto): Promise<OutJwtTokenDto | NotFoundError | BadRequestError> {
-    const authInfo = await this.userService.getAuthInfoByUsername(username);
-    if (authInfo instanceof NotFoundError) return authInfo;
+    const authInfo =
+      (await this.userService.getAuthInfoByUsername(validator)) ??
+      (await this.userService.getAuthInfoByPhone(validator)) ??
+      (await this.userService.getAuthInfoByEmail(validator));
+    if (!authInfo) return new NotFoundError('User');
     if (authInfo.password !== password)
       return new BadRequestError('InvalidPassword');
     const token = this.generateJwt({
