@@ -6,13 +6,9 @@ export class InCreateTicket {
   @IsString()
   type: string;
 
-  @ApiProperty({ required: true, default: 'firstname' })
+  @ApiProperty({ required: true, default: 'fullname' })
   @IsString()
-  firstname: string;
-
-  @ApiProperty({ required: true, default: 'lastname' })
-  @IsString()
-  lastname: string;
+  fullname: string;
 
   @ApiProperty({ required: true, default: 'description' })
   @IsString()

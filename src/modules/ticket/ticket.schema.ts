@@ -7,10 +7,7 @@ export class Ticket {
   type: string;
 
   @Prop({ required: true })
-  firstname: string;
-
-  @Prop({ required: true })
-  lastname: string;
+  fullname: string;
 
   @Prop({ required: true })
   description: string;
