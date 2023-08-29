@@ -133,7 +133,11 @@ export class CourseService {
     if (courses.length === 0)
       courses.push(...(await this.courseRepo.getLevelZeroCourses()));
 
-    return courses.filter((x) => x).map(CourseDao.convertOne);
+    return courses.reduce(
+      (perv, curr) => (curr ? [...perv, CourseDao.convertOne(curr)] : perv),
+      [] as TypeCourseDto[],
+    );
+    //.map(CourseDao.convertOne);
   }
 
   async getPaginatedCourses(

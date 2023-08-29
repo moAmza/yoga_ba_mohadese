@@ -4,8 +4,7 @@ import { Ticket } from '../ticket.schema';
 export abstract class TicketDao {
   static convertOne = (model: MongoDoc<Ticket>): TypeTicketDto => ({
     id: model._id.toString(),
-    firstname: model.firstname,
-    lastname: model.lastname,
+    fullname: model.fullname,
     description: model.description,
     phone: model.phone,
     type: model.type,

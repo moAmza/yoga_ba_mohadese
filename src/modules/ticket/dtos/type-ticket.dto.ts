@@ -12,11 +12,7 @@ export class TypeTicketDto {
 
   @ApiProperty({ required: true, default: 'firstname' })
   @IsString()
-  firstname: string;
-
-  @ApiProperty({ required: true, default: 'lastname' })
-  @IsString()
-  lastname: string;
+  fullname: string;
 
   @ApiProperty({ required: true, default: 'description' })
   @IsString()

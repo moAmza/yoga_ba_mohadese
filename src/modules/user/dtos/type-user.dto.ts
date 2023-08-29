@@ -16,11 +16,11 @@ export class TypeUserDto {
   @ApiProperty({ required: true, default: 'lastname' })
   lastname: string;
 
-  @ApiProperty({ required: true, default: '09120000000' })
-  phone: string;
+  @ApiProperty({ required: false, default: '09120000000' })
+  phone?: string;
 
-  @ApiProperty({ required: true, default: 'test@test.test' })
-  email: string;
+  @ApiProperty({ required: false, default: 'test@test.test' })
+  email?: string;
 
   @ApiProperty({ required: true, default: new Date() })
   createdAt: Date;

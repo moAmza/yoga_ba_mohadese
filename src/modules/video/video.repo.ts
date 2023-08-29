@@ -26,14 +26,14 @@ export class VideoRepo {
 
   async deleteById(
     video_id: mongoose.Types.ObjectId,
-  ): Promise<MongoDoc<Video>[]> {
+  ): Promise<MongoDoc<Video>[] | null> {
     return await this.model.findByIdAndDelete(video_id);
   }
 
   async getByNumAndCourseId(
     course_id: mongoose.Types.ObjectId,
     num: number,
-  ): Promise<MongoDoc<Video>> {
+  ): Promise<MongoDoc<Video> | null> {
     return await this.model.findOne({ course_id, num });
   }
 }
