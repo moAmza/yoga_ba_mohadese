@@ -8,6 +8,9 @@ export class Counter {
 
   @Prop({ required: true })
   user_id: mongoose.Types.ObjectId;
+
+  @Prop({ required: true })
+  minute: number;
 }
 
 export const CounterSchema = SchemaFactory.createForClass(Counter);

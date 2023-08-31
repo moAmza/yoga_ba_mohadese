@@ -75,7 +75,7 @@ export class VideoService {
       )
     )
       .filter(({ view_count }) => typeof view_count === 'number')
-      .filter(({ view_count }) => (view_count as number) < 5)
+      .filter(({ view_count }) => (view_count as number) < 4 * 60)
       .map(({ video }) => video);
   }
 
@@ -102,7 +102,7 @@ export class VideoService {
       new mongoose.Types.ObjectId(userId),
       new mongoose.Types.ObjectId(videoId),
     );
-    return videoCount;
+    return videoCount?.minute ?? 0;
   }
 
   async increaseViewCount(
@@ -116,10 +116,21 @@ export class VideoService {
     const user = await this.userService.getUserByid(userId);
     if (user instanceof BaseError) return user;
     if (user.is_admin) return 0;
-    let counterModel = await this.counterRepo.create({
-      video_id: new mongoose.Types.ObjectId(vidoeId),
-      user_id: new mongoose.Types.ObjectId(userId),
-    });
+    let viewCount = await this.counterRepo.getCountByVideoAndUserId(
+      new mongoose.Types.ObjectId(userId),
+      new mongoose.Types.ObjectId(vidoeId),
+    );
+    if (!viewCount) {
+      await this.counterRepo.create(
+        new mongoose.Types.ObjectId(userId),
+        new mongoose.Types.ObjectId(vidoeId),
+      );
+    } else {
+      await this.counterRepo.increaseCount(
+        new mongoose.Types.ObjectId(userId),
+        new mongoose.Types.ObjectId(vidoeId),
+      );
+    }
 
     return this.getVideosViewCount(userId, vidoeId);
   }
