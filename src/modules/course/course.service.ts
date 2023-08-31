@@ -148,7 +148,7 @@ export class CourseService {
     if (courses instanceof BadRequestError) return courses.throw();
     const res: OutGetPaginatedCoursesDto = {
       count: courses.length,
-      values: courses.slice((page - 1) * num, num),
+      values: courses.slice((page - 1) * num, page * num),
     };
 
     return res;
