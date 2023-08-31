@@ -17,7 +17,7 @@ export class InGetPaginatedTickets implements InPaginatedDto {
   @IsOptional()
   num: number = 20;
 
-  @ApiProperty({ required: false, default: 'forgot_password' })
+  @ApiProperty({ required: false, default: 'forget-password' })
   @IsString()
   @IsOptional()
   type: string;

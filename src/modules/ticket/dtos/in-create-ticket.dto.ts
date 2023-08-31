@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 
 export class InCreateTicket {
-  @ApiProperty({ required: true, default: 'forgot_password' })
+  @ApiProperty({ required: true, default: 'forget-password' })
   @IsString()
   type: string;
 

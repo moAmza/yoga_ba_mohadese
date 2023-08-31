@@ -73,7 +73,7 @@ export class TicketService {
 
     if (!ticket) return new NotFoundError('Ticket');
 
-    if (ticket.type !== 'forgot_password')
+    if (ticket.type !== 'forget-password')
       return new BadRequestError('InvalidTicketTypeForForgotPasswordTicket');
 
     let new_user = await this.userService.updatePasswordWithPhone(

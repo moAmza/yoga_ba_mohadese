@@ -6,7 +6,7 @@ export class TypeTicketDto {
   @IsString()
   id: string;
 
-  @ApiProperty({ required: true, default: 'forgot_password' })
+  @ApiProperty({ required: true, default: 'forget-password' })
   @IsString()
   type: string;
 

@@ -33,7 +33,7 @@ const getMessage = (errType: BadRequestErrorTypes): string => {
     case 'RequiredEmailOrPhone':
       return 'وارد کردن ایمیل و یا تلفن اجباریست';
     case 'InvalidTicketTypeForForgotPasswordTicket':
-      return 'تایپ تیکت انتخاب شده forgot_password نیست';
+      return 'تایپ تیکت انتخاب شده forget-password نیست';
     default:
       return 'UNTRANSLATED_ERROR: ' + errType;
   }
