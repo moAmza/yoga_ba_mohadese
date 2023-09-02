@@ -92,10 +92,12 @@ export class UserService {
     paramUserId: string,
   ): Promise<TypeUserDto | NotFoundError | BadRequestError> {
     const isIdValid = mongoose.Types.ObjectId.isValid(paramUserId);
+
     if (!isIdValid) return new BadRequestError('InvalidInputId');
     const userModel = await this.userRepo.getById(
       new mongoose.Types.ObjectId(paramUserId),
     );
+
     if (!userModel) return new NotFoundError('User');
     const courses = await this.courseService.getAllCourses(
       userModel._id.toString(),

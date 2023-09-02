@@ -123,6 +123,8 @@ export class CourseService {
     userId: string,
   ): Promise<TypeCourseDto[] | BadRequestError> {
     const userAccesses = await this.accessService.getAccessesByUserId(userId);
+    // const adminUsers = await this.userService.getAdminUsers();
+
     if (userAccesses instanceof BaseError) return userAccesses.throw();
     const courses = await Promise.all(
       userAccesses.map((c) =>
@@ -130,7 +132,10 @@ export class CourseService {
       ),
     );
 
-    if (courses.length === 0)
+    if (
+      courses.length === 0
+      // adminUsers.filter((adminUser) => adminUser.id === userId).length !== 0
+    )
       courses.push(...(await this.courseRepo.getLevelZeroCourses()));
 
     return courses.reduce(
@@ -142,13 +147,16 @@ export class CourseService {
 
   async getPaginatedCourses(
     userId: string,
-    { page, num }: InGetPaginatedCourses,
+    { page, num, search }: InGetPaginatedCourses,
   ): Promise<OutGetPaginatedCoursesDto | BadRequestError> {
     const courses = await this.getAllCourses(userId);
+
     if (courses instanceof BadRequestError) return courses.throw();
     const res: OutGetPaginatedCoursesDto = {
       count: courses.length,
-      values: courses.slice((page - 1) * num, page * num),
+      values: courses
+        .filter((course) => course.title.includes(search))
+        .slice((page - 1) * num, page * num),
     };
 
     return res;

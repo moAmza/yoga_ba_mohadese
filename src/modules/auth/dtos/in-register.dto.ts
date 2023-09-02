@@ -6,6 +6,7 @@ import {
   IsPhoneNumber,
   IsString,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class InRegisterDto {
@@ -30,6 +31,7 @@ export class InRegisterDto {
 
   @ApiProperty({ required: false, default: 'email@email.email' })
   @IsOptional()
+  @ValidateIf((email) => email !== '')
   @IsString()
   @IsEmail({}, { message: 'ایمیل نامعتبر است' })
   @Transform((param) => param.value.toLowerCase())

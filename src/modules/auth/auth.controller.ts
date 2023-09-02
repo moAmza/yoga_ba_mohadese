@@ -23,6 +23,8 @@ export class AuthController {
   @ApiOperation({ summary: 'register user' })
   @ApiBadRequestResponse({ type: DuplicateError })
   async register(@Body() userInfo: InRegisterDto): Promise<OutJwtTokenDto> {
+    console.log(userInfo);
+
     const data = await this.authService.register(userInfo);
     if (data instanceof BaseError) return data.throw();
     return data;
